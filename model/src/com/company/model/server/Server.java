@@ -2,6 +2,8 @@ package com.company.model.server;
 
 
 import com.company.remote.IDepositServer;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -11,15 +13,19 @@ import java.rmi.registry.Registry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ServerStarter {
-    private static final Logger LOGGER = Logger.getLogger(ServerStarter.class.getName());
+public class Server {
+    private static final Logger LOGGER = Logger.getLogger(Server.class.getName());
     private static final int PORT_NUMBER = 1234;
     private static final String REGISTRY_URL = "rmi://localhost:" + PORT_NUMBER + "/";
+    private static final String HIBERNATE_XML = "hibernate.cfg.xml";
 
     public static void main(String[] args) {
         try {
             startRmiRegistry();
-            IDepositServer service = new DepositService();
+            Configuration configuration = new Configuration();
+            configuration.configure(HIBERNATE_XML);
+            SessionFactory factory = configuration.buildSessionFactory();
+            IDepositServer service = new DepositService(factory);
             Naming.rebind(REGISTRY_URL + DepositService.getServiceName(), service);
         } catch (RemoteException exception) {
             LOGGER.log(Level.SEVERE, "Registry error. Can't start service", exception);

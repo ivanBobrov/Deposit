@@ -1,25 +1,18 @@
 package com.company.ui;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import com.company.remote.IDepositServer;
+import java.awt.*;
+import javax.swing.*;
 
 public class Main {
+    private static final Dimension frameSize = new Dimension(500, 600);
 
     public static void main(String[] args) {
-        try {
-            Configuration config = Configuration.getConfiguration();
-            IDepositServer depositService = (IDepositServer) Naming.lookup(config.getServiceUrl());
-            System.out.println(depositService.getString());
-        } catch (RemoteException exception) {
-            System.out.println("Can't find server");
-        } catch (MalformedURLException exception) {
-            System.out.println("bad url");
-        } catch (NotBoundException exception) {
-            System.out.println("Service not found in registry");
-        }
+        JFrame mainFrame = new JFrame("Deposit");
+        JPanel choosePanel = new ChooseAccountPanel();
+        mainFrame.getContentPane().add(choosePanel);
 
+        mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        mainFrame.setMinimumSize(frameSize);
+        mainFrame.setVisible(true);
     }
 }
